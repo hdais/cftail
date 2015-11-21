@@ -2,7 +2,7 @@
 
 import sys, time, re, getopt, StringIO
 
-seq = { 'green' : ['32',], 'red': ['31',], 'yellow': ['33', ], 'default': ('0', ), 'surpress': None }
+seq = { 'green' : ['32',], 'red': ['31',], 'yellow': ['33', ], 'default': ('0', ), 'suppress': None }
 def hilite(string, color, reverse=False):
 	if color == 'default':
 		return string
@@ -80,7 +80,7 @@ class filter:
 			for exception in self.exception:
 				if exception.search(string):
 					action = action_exception
-		if action != 'surpress':
+		if action != 'suppress':
 			sys.stdout.write(hilite(string, action, self.reverse))
 			sys.stdout.flush()
 
