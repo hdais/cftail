@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+
+import sys, time, re, getopt, StringIO
+
+seq = { 'green' : ['32',], 'red': ['31',], 'yellow': ['33', ], 'default': ('0', ), 'surpress': None }
+def hilite(string, color, reverse=False):
+	if color == 'default':
+		return string
+	s = seq[color]
+	if reverse:
+		s.append('7')
+
+
+ 	return '\x1b[%sm%s\x1b[0m' % (';'.join(s), string)
+
+class filter:
+	filterre = re.compile('^([a-zA-Z0-9]+)\s+([a-zA-Z0-9]+)\s+(\S+.*)$')
+	#exceptionre = re.compile('^"(.*)"$')
+	def __init__(self, filterfile=None, exceptionfile=None, reverse=False):
+		self.filter = []
+		self.exception = []
+		self.reverse = reverse
+	def filterappend(self, filterfile):
+		for  l in filterfile.readlines():
+			l = l.rstrip()
+			l = l.lstrip()
+			if len(l) == 0:
+				continue
+			if l[0] == '#':
+				continue
+			m = filter.filterre.match(l)
+			try:
+				action_match = m.group(1)
+				action_exception = m.group(2)
+				regexp = m.group(3)
+			except:
+				print >> sys.stderr, hilite('Filter rule syntax error:', 'red', self.reverse), l
+				continue
+			if action_match in seq.keys() and action_exception in seq.keys():
+				try:
+					r = re.compile(regexp)
+				except:
+					print >> sys.stderr, hilite('Filter regexp error:', 'red', self.reverse), l
+					continue
+			else:
+				print >> sys.stderr, hilite('Filter invalid action:', 'red', self.reverse), l
+				continue
+			self.filter.append((action_match, action_exception, r))
+	def exceptionappend(self, exceptionfile):
+		for l in exceptionfile.readlines():
+			l = l.lstrip()
+			if len(l) == 0:
+				continue
+			if l[0] == '#':
+				continue
+			#m = filter.exceptionre.match(l)
+			#if m:
+			#	ex = m.group(1)
+			#else:
+			#	ex = l
+			try:
+				r = re.compile(l)
+			except:
+				print >> sys.stderr, hilite('Exception rule regexp error:', 'red', self.reverse), l
+				continue
+			self.exception.append(r)
+	def setreverse(self, reverse):
+		self.reverse = reverse
+
+	def write(self, string):
+		action = 'default'
+		for rule in self.filter:
+			action_match = rule[0]
+			action_exception = rule[1]
+			regexp = rule[2]
+			if regexp.search(string):
+				action = action_match
+				break
+		if action != 'default':
+			for exception in self.exception:
+				if exception.search(string):
+					action = action_exception
+		if action != 'surpress':
+			sys.stdout.write(hilite(string, action, self.reverse))
+			sys.stdout.flush()
+
+def loop(filter, logfiles):
+	while True:
+		for f in logfiles:
+			while True:
+				line = f.readline()
+				if line:
+					filter.write(line)
+				else:
+					break
+		time.sleep(0.2)
+	
+
+def main():
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], 'hrf:F:e:E:')
+	except getopt.GetoptError, err:
+		print str(err)
+		sys.exit(2)
+	myfilter = filter()
+	for o, a in opts:
+		if o == '-f':
+			myfilter.filterappend(open(a))
+		elif o == '-e':
+			myfilter.exceptionappend(open(a))
+		elif o == '-F':
+			myfilter.filterappend(StringIO.StringIO(a))
+		elif o == '-E':
+			myfilter.exceptionappend(StringIO.StringIO(a))
+		elif o == '-r':
+			myfilter.setreverse(True)
+	print >> sys.stderr, hilite('Filter %d rule(s), Exception %d rule(s) read', 'green') % (len(myfilter.filter), len(myfilter.exception))
+	logfiles = []
+	for name in args:
+		f = open(name)
+		f.seek(0,2)
+		logfiles.append(f)
+	loop(myfilter, logfiles)
+
+if __name__ == '__main__':
+	main()
