@@ -60,7 +60,7 @@ router1.logを常時監視しつつ行が追加されたら表示する。キー
 
 ## オプション
 
-`-F <rule>`
+* `-F <rule>`
 
 キーワードと、それにマッチした時の表示方法のルールを指定する。`<rule>`の書式は
 `<action> <action_when_exception> <regular_expression>` で、それぞれ表示色、"例外キーワード"を含む時の表示色、キーワードの正規表現である。例: `-F 'red green LINEPROTO-5-UPDOWN'`
@@ -68,15 +68,15 @@ router1.logを常時監視しつつ行が追加されたら表示する。キー
 `<action>` は、`red` (赤で表示)、`yellow` (黄色)、`green` (緑)、`default` (端末のデフォルト色)、`surpress` (その行を出力しない) が指定可能である。
 
 
-`-E <exception_rule>`
+* `-E <exception_rule>`
 
 "例外キーワード" を指定する。`<exception_rule>`は例外キーワードの正規表現である。例: `-E GigabitEthernet 1/2/2`
 
-`-f <rule_file>`
+* `-f <rule_file>`
 
 キーワードとアクションをファイルから読み込む。ファイルは1行1ルールで、各行の書式は `-F` オプションの `<rule>`と同じ。
 
-`-e <exception_rule_file>`
+* `-e <exception_rule_file>`
 
 「例外キーワード」をファイルから読み込む。ファイルは1行1ルールで、各行の書式は `-E`オプションの `<exception_rule>と同じ。
 
