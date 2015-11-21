@@ -2,46 +2,51 @@
 
 ## 例
 
-router1.logを常時監視しつつ行が追加されたら表示する。キーワード`LINK-3-UPDOWN` が含まれる行は赤く(`red`)表示する。
+* router1.logを常時監視しつつ行が追加されたら表示する。キーワード`LINK-3-UPDOWN` が含まれる行は赤く(`red`)表示する。
+
 
     cftail -F 'red red LINK-3-UPDOWN' router1.log
 
 ===
+* `-F`は複数指定可能である。`LINEPROTO-5-UPDOWN`では黄色、`LINK-3-UPDOWN`では赤で表示する。
 
-`-F`は複数指定可能である。`LINEPROTO-5-UPDOWN`では黄色、`LINK-3-UPDOWN`では赤で表示する。
 
     cftail -F 'yellow yellow LINEPROTO-5-UPDOWN' -F 'red red LINK-3-UPDOWN' router1.log
     
+
 ルールは先に記載したほうが優先される。
 
 ===
-`LINK-3-UPDOWN` が含まれる行は赤く(red)表示する。ただし、そのようなキーワードでも`GigabitEthernet2/0/1`が含まれる場合は緑 (`green`)で表示する。
-ルールの1番目のアクション(`red`)はキーワードにマッチした場合の色、2番目のアクション (`green`)は、例外ルール `-E`にマッチした場合の色である。
+* `LINK-3-UPDOWN` が含まれる行は赤く(red)表示する。ただし、そのようなキーワードでも`GigabitEthernet2/0/1`が含まれる場合は緑 (`green`)で表示する。
+* ルールの1番目のアクション(`red`)はキーワードにマッチした場合の色、2番目のアクション (`green`)は、例外ルール `-E`にマッチした場合の色である。
+
 
     cftail -F 'red green LINK-3-UPDOWN' -E 'GigabitEthernet2/0/1' router1.log
     
 ===
-キーワードは正規表現が指定できる。
+* キーワードは正規表現が指定できる。
+
 
     cftail -F 'red green LINEPROTO-5-UPDOWN|LINK-3-UPDOWN' -E 'GigabitEthernet2/0/[12]' router1.log
 
 ===
-複数のファイルを同時にtail-fすることもできる。
+* 複数のファイルを同時に表示することもできる。
+
 
     cftail -F 'red green LINK-3-UPDOWN' router1.log router2.log router3.log
     
 ===
-ルールをファイルで与えることもできる。
+* ルールをファイルで与えることもできる。
+
 
     cftail -f rulefile.rule -e exceptionrule.erule router1.log
 
-ルールファイルは以下のように各行にルールを記載する。
+* ルールファイルは以下のように各行にルールを記載する。
 
     # rulefile.rule
     red green LINEPROTO-5-UPDOWN
     red green LINEPROTO-5-UPDOWN
     red red HARDWARE
-
 
     # exceptionrule.erule
     GigabitEthernet2/0/1
