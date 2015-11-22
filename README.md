@@ -7,12 +7,15 @@
 
         cftail -F 'red red LINK-3-UPDOWN' router1.log
 
+    ![cftaili2](https://raw.githubusercontent.com/hdais/cftail/master/images/cftail1.png "cftail1")
+
 ===
 * `-F`は複数指定可能である。`LINEPROTO-5-UPDOWN`では黄色、`LINK-3-UPDOWN`では赤で表示する。
 
 
         cftail -F 'yellow yellow LINEPROTO-5-UPDOWN' -F 'red red LINK-3-UPDOWN' router1.log
-    
+
+    ![cftail2](https://raw.githubusercontent.com/hdais/cftail/master/images/cftail2.png "cftail2") 
 
 ルールは先に記載したほうが優先される。
 
@@ -22,7 +25,9 @@
 
 
         cftail -F 'red green LINK-3-UPDOWN' -E 'GigabitEthernet2/0/1' router1.log
-    
+
+    ![cftail3](https://raw.githubusercontent.com/hdais/cftail/master/images/cftail3.png "cftail3")
+
 ===
 * キーワードは正規表現が指定できる。
 
