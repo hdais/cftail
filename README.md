@@ -64,10 +64,12 @@
 ## 詳細説明
 
     cftail [-r] [-F <rule>] [-f <rule_file>]
-           [-E <exception_fule>] [-e <exception_rule_file>]
-           file [ file ... ]
+           [-E <exception_rule>] [-e <exception_rule_file>]
+           [ file ... ]
 
 `file` を常時監視し、追加行が発生したらその行を標準出力に出力する。通常は端末のデフォルト色で出力するが、後述のようにルールを指定することで特定のキーワード (正規表現で指定)が含まれる行を別の色で表示させることができる。
+
+`file` が指定されない場合は標準入力を監視する。
 
 ## オプション
 
