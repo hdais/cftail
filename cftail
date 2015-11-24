@@ -11,23 +11,24 @@ seq = {	'black' : [ '30', ],
 	'cyan': ['36', ],
 	'white': ['37', ],
 	'default': ('0', ), 'suppress': None }
+
 def hilite(string, color, reverse=False):
 	if color == 'default':
 		return string
 	s = seq[color]
 	if reverse:
 		s.append('7')
-
-
  	return '\x1b[%sm%s\x1b[0m' % (';'.join(s), string)
 
 class filter:
 	filterre = re.compile('^([a-zA-Z0-9]+)\s+([a-zA-Z0-9]+)\s+(\S+.*)$')
 	#exceptionre = re.compile('^"(.*)"$')
+
 	def __init__(self, filterfile=None, exceptionfile=None, reverse=False):
 		self.filter = []
 		self.exception = []
 		self.reverse = reverse
+
 	def filterappend(self, filterfile):
 		for  l in filterfile.readlines():
 			l = l.rstrip()
@@ -54,6 +55,7 @@ class filter:
 				print >> sys.stderr, hilite('Filter invalid action:', 'red', self.reverse), l
 				continue
 			self.filter.append((action_match, action_exception, r))
+
 	def exceptionappend(self, exceptionfile):
 		for l in exceptionfile.readlines():
 			l = l.lstrip()
@@ -72,6 +74,7 @@ class filter:
 				print >> sys.stderr, hilite('Exception rule regexp error:', 'red', self.reverse), l
 				continue
 			self.exception.append(r)
+
 	def setreverse(self, reverse):
 		self.reverse = reverse
 
@@ -128,6 +131,8 @@ def main():
 		f = open(name)
 		f.seek(0,2)
 		logfiles.append(f)
+	if len(logfiles) < 1:
+		logfiles.append(sys.stdin)
 	loop(myfilter, logfiles)
 
 if __name__ == '__main__':
