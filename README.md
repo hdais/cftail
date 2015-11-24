@@ -83,7 +83,7 @@
 
 * `-E <exception_rule>`
 
-"例外キーワード" を指定する。`<exception_rule>`は例外キーワードの正規表現である。例: `-E GigabitEthernet 1/2/2`
+"例外キーワード" を指定する。`<exception_rule>`は例外キーワードの正規表現である。例: `-E GigabitEthernet1/2/2`
 
 * `-f <rule_file>`
 
