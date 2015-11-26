@@ -63,7 +63,7 @@
 
 ## 詳細説明
 
-    cftail [-r] [-F <rule>] [-f <rule_file>]
+    cftail [-r] [-h] [-F <rule>] [-f <rule_file>]
            [-E <exception_rule>] [-e <exception_rule_file>]
            [ file ... ]
 

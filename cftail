@@ -106,12 +106,17 @@ def loop(filter, logfiles):
 					break
 		time.sleep(0.2)
 	
+def usage():
+	print >> sys.stderr, """usage: %s [-r] [-h] [-F <rule>] [-f <rule_file>]
+       [-E <exception_rule>] [-e <exception_rule_file>]
+       [ file ... ]""" % sys.argv[0]
 
 def main():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], 'hrf:F:e:E:')
 	except getopt.GetoptError, err:
 		print str(err)
+		usage()
 		sys.exit(2)
 	myfilter = filter()
 	for o, a in opts:
@@ -125,6 +130,9 @@ def main():
 			myfilter.exceptionappend(StringIO.StringIO(a))
 		elif o == '-r':
 			myfilter.setreverse(True)
+		elif o == '-h':
+			usage()
+			sys.exit(2)
 	print >> sys.stderr, hilite('Filter %d rule(s), Exception %d rule(s) read', 'green') % (len(myfilter.filter), len(myfilter.exception))
 	logfiles = []
 	for name in args:
