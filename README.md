@@ -63,8 +63,8 @@
 
 ## 詳細説明
 
-    cftail [-r] [-h] [-F <rule>] [-f <rule_file>]
-           [-E <exception_rule>] [-e <exception_rule_file>]
+    cftail [-r] [-h] [-F rule] [-f rule_file]
+           [-E exception_rule] [-e exception_rule_file]
            [ file ... ]
 
 `file` を常時監視し、追加行が発生したらその行を標準出力に出力する。通常は端末のデフォルト色で出力するが、後述のようにルールを指定することで特定のキーワード (正規表現で指定)が含まれる行を別の色で表示させることができる。
@@ -75,21 +75,21 @@
 
 * `-F <rule>`
 
-キーワードと、それにマッチした時の表示方法のルールを指定する。`<rule>`の書式は
+キーワードと、それにマッチした時の表示方法のルールを指定する。`rule`の書式は
 `<action> <action_when_exception> <regular_expression>` で、それぞれ表示色、"例外キーワード"を含む時の表示色、キーワードの正規表現である。例: `-F 'red green LINEPROTO-5-UPDOWN'`
 
 `<action>` は、`red` (赤で表示)、`yellow` (黄色)、`green` (緑)、`blue` (青)、`black`、`cyan`、`magenta`、`white`、`default` (端末のデフォルト色)、`suppress` (その行を出力しない) が指定可能である。
 
 
-* `-E <exception_rule>`
+* `-E exception_rule`
 
-"例外キーワード" を指定する。`<exception_rule>`は例外キーワードの正規表現である。例: `-E GigabitEthernet1/2/2`
+"例外キーワード" を指定する。`exception_rule`は例外キーワードの正規表現である。例: `-E GigabitEthernet1/2/2`
 
-* `-f <rule_file>`
+* `-f rule_file`
 
-キーワードとアクションをファイルから読み込む。ファイルは1行1ルールで、各行の書式は `-F` オプションの `<rule>`と同じ。
+キーワードとアクションをファイルから読み込む。ファイルは1行1ルールで、各行の書式は `-F` オプションの `rule`と同じ。
 
-* `-e <exception_rule_file>`
+* `-e exception_rule_file`
 
 「例外キーワード」をファイルから読み込む。ファイルは1行1ルールで、各行の書式は `-E`オプションの `<exception_rule>と同じ。
 
