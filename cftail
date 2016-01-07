@@ -63,6 +63,8 @@ class filter:
 		self.filter = []
 		self.exception = []
 		self.reverse = reverse
+		self.replacerule = []
+		self.replaceall = False
 
 	def filterappend(self, filterfile):
 		for  l in filterfile.readlines():
@@ -113,8 +115,23 @@ class filter:
 	def setreverse(self, reverse):
 		self.reverse = reverse
 
+	def replaceruleappend(self, rfile, regexp=False):
+		for l in rfile.readlines():
+			l = l.lstrip()
+			l = l.rstrip()
+			if len(l) == 0:
+				continue
+			if l[0] == '#':
+				continue
+			r = l.split()
+			if(len(r) >= 2):
+				self.replacerule.append((r[0], r[1], regexp))
+			if(len(r) == 1):
+				print >> sys.stderr, hilite('Replacing rule syntax error:', 'red', self.reverse), l
+
 	def write(self, string):
 		action = 'default'
+		string = replace(string, self.replacerule, self.replaceall)
 		for rule in self.filter:
 			action_match = rule[0]
 			action_exception = rule[1]
@@ -146,10 +163,19 @@ def usage():
        [-E <exception_rule>] [-e <exception_rule_file>]
        [ file ... ]""" % sys.argv[0]
 
+def replace(string, replacerule, replaceall):
+	for rr in replacerule:
+		if(replaceall):
+			string = string.replace(rr[0], rr[1])
+		else:
+			string = string.replace(rr[0], rr[1], 1)
+	return string
+
+
 def main():
 	printlast10 = True
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hrsf:F:e:E:')
+		opts, args = getopt.getopt(sys.argv[1:], 'hrsaf:F:e:E:w:W:')
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
@@ -168,6 +194,12 @@ def main():
 			myfilter.setreverse(True)
 		elif o == '-s':
 			printlast10 = False
+		elif o == '-w':
+			myfilter.replaceruleappend(open(a))
+		elif o == '-W':
+			myfilter.replaceruleappend(StringIO.StringIO(a))
+		elif o == '-a':
+			myfilter.replaceall = True
 		elif o == '-h':
 			usage()
 			sys.exit(2)
@@ -175,9 +207,10 @@ def main():
 	logfiles = []
 	for name in args:
 		if printlast10:
-			out = tail_lines(name)
+			out = tail_lines(name, returnlist=True)
 			for l in out:
-				sys.stdout.write(l)
+				sys.stdout.write(replace(l, myfilter.replacerule, myfilter.replaceall))
+				sys.stdout.write('\n')
 		f = open(name)
 		f.seek(0,2)
 		logfiles.append(f)
